@@ -1,11 +1,13 @@
+import { Outlet } from "react-router-dom";
+import Navbar from "./components/Navbar";
 
 function App() {
-
   return (
-    <div className='min-h-screen'>
-      <button className="btn">fuck</button>
+    <div className="min-h-screen">
+      <Navbar />
+      <Outlet />
     </div>
-  )
+  );
 }
 
-export default App
+export default App;
