@@ -6,17 +6,39 @@ import SignupPage from "./pages/SignupPage";
 import App from "./App";
 import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
+import { ProtectedRoute } from "./components/ProtectRoute";
 
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      { index: true, element: <HomePage /> },
-      { path: "/signup", element: <SignupPage /> },
       { path: "/login", element: <LoginPage /> },
-      { path: "/settings", element: <SettingsPage /> },
-      { path: "/profile", element: <ProfilePage /> },
+      { path: "/signup", element: <SignupPage /> },
+      {
+        index: true,
+        element: (
+          <ProtectedRoute>
+            <HomePage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/settings",
+        element: (
+          <ProtectedRoute>
+            <SettingsPage />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <ProfilePage />
+          </ProtectedRoute>
+        ),
+      },
       { path: "*", element: <NotFoundPage /> },
     ],
   },
