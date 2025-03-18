@@ -1,3 +1,4 @@
+import { unprotectedRoutes } from "@/lib/auth-utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import React, { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -6,24 +7,16 @@ export function ProtectedRoute({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   const { authUser } = useAuthStore();
-  const location = useLocation();
+  const { pathname } = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (
-      location.pathname !== "/login" &&
-      location.pathname !== "/signup" &&
-      !authUser
-    ) {
-      navigate("/login");
+    if (!unprotectedRoutes.includes(pathname) && !authUser) {
+      navigate("/signup");
     }
-  }, [authUser, location.pathname, navigate]);
+  }, [authUser, navigate, pathname]);
 
-  if (
-    location.pathname !== "/login" &&
-    location.pathname !== "/signup" &&
-    !authUser
-  ) {
+  if (!unprotectedRoutes.includes(pathname) && !authUser) {
     return null;
   }
 
