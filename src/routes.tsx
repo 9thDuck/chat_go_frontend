@@ -1,25 +1,60 @@
 import { createBrowserRouter } from "react-router-dom";
-import LoginPage from "./pages/LoginPage";
 import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
-import SignupPage from "./pages/SignupPage";
 import App from "./App";
-import HomePage from "./pages/HomePage";
 import NotFoundPage from "./pages/NotFoundPage";
 import { ProtectedRoute } from "./components/ProtectRoute";
-
+import { lazy, Suspense } from "react";
+const AuthPage = lazy(() =>
+  import("@/pages/AuthPage").then((m) => ({ default: m.AuthPage }))
+);
+const HomePage = lazy(() => import("@/pages/HomePage"));
+const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const Signup = lazy(() => import("@/components/Signup"));
+const Login = lazy(() => import("@/components/Login"));
 export const router = createBrowserRouter([
   {
     path: "/",
     element: <App />,
     children: [
-      { path: "/login", element: <LoginPage /> },
-      { path: "/signup", element: <SignupPage /> },
+      {
+        path: "/auth",
+        element: (
+          <Suspense fallback={<div className="loading-xl loading-ring"></div>}>
+            <AuthPage />
+          </Suspense>
+        ),
+        children: [
+          {
+            path: "login",
+            element: (
+              <Suspense
+                fallback={<div className="loading-xl loading-ring"></div>}
+              >
+                <Login />
+              </Suspense>
+            ),
+          },
+          {
+            path: "signup",
+            element: (
+              <Suspense
+                fallback={<div className="loading-xl loading-ring"></div>}
+              >
+                <Signup />
+              </Suspense>
+            ),
+          },
+        ],
+      },
       {
         index: true,
         element: (
           <ProtectedRoute>
-            <HomePage />
+            <Suspense
+              fallback={<div className="loading-xl loading-ring"></div>}
+            >
+              <HomePage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -27,7 +62,11 @@ export const router = createBrowserRouter([
         path: "/settings",
         element: (
           <ProtectedRoute>
-            <SettingsPage />
+            <Suspense
+              fallback={<div className="loading-xl loading-ring"></div>}
+            >
+              <SettingsPage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },
@@ -35,7 +74,11 @@ export const router = createBrowserRouter([
         path: "/profile",
         element: (
           <ProtectedRoute>
-            <ProfilePage />
+            <Suspense
+              fallback={<div className="loading-xl loading-ring"></div>}
+            >
+              <ProfilePage />
+            </Suspense>
           </ProtectedRoute>
         ),
       },

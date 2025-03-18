@@ -4,7 +4,7 @@ import duckPic3 from "@/assets/ducks-random-in-lake.jpeg";
 import duckPic4 from "@/assets/single-duck-in-water-causing-ripples.jpeg";
 import { CarouselSlide } from "@/components/Hero";
 
-export const DUCK_CAROUESL_SLIDES: CarouselSlide[] = [
+export const DUCK_CAROUSEL_SLIDES: CarouselSlide[] = [
   {
     image: duckPic1,
     title: "Simple & Secure",

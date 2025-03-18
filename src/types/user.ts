@@ -8,9 +8,22 @@ export type User = {
   profilepic: string;
   roleId: string;
   role: Role;
-  createdat: string;
-  updatedat: string;
+  createdAt: string;
+  updatedAt: string;
 };
+
+export type ServerUser = {
+  id: number;
+  username: string;
+  email: string;
+  first_name: string;
+  last_name: string;
+  profile_pic: string;
+  roleId: string;
+  role: Role;
+  created_at: string;
+  updated_at: string;
+}
 
 export type LoginCredentials = {
   email: string;
@@ -19,5 +32,5 @@ export type LoginCredentials = {
 
 
 export type UserResponse = {
-  data: User;
+  data: ServerUser;
 };
