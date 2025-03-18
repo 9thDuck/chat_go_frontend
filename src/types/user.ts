@@ -5,6 +5,7 @@ export type User = {
   email: string;
   firstname: string;
   lastname: string;
+  publicKey: string;
   profilepic: string;
   roleId: string;
   role: Role;
@@ -18,6 +19,7 @@ export type ServerUser = {
   email: string;
   first_name: string;
   last_name: string;
+  public_key: string;
   profile_pic: string;
   roleId: string;
   role: Role;

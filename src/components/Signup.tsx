@@ -9,8 +9,13 @@ import logo from "@/assets/duck.svg";
 import { useSignup } from "@/hooks/useSignup";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, Navigate } from "react-router-dom";
 import { AxiosError } from "axios";
+import { ECIES_CONFIG, PrivateKey } from "eciesjs";
+
+// Configure ECIES before using
+ECIES_CONFIG.ellipticCurve = "x25519";
+ECIES_CONFIG.symmetricAlgorithm = "xchacha20";
 
 const signupFormSchema = z
   .object({
@@ -56,21 +61,25 @@ const SignupPage = () => {
     },
     resolver: zodResolver(signupFormSchema),
   });
-  const { removeAuthUser } = useAuthStore();
+  const { authUser, removeAuthUser } = useAuthStore();
 
   const { mutate, isPending } = useSignup();
   const navigate = useNavigate();
 
-  const onSubmit: SubmitHandler<SignUpFormData> = (formData) => {
+  const onSubmit: SubmitHandler<SignUpFormData> = async (formData) => {
+    console.time("keygen");
+    const sk = new PrivateKey();
+    console.log("sk", sk.secret);
     mutate(
       {
         username: formData.username,
         email: formData.email,
         password: formData.password,
+        public_key: sk.publicKey.toHex(),
       },
       {
-        onSuccess: () => {
-          navigate("/login");
+        onSuccess: async () => {
+          navigate("/auth/login");
           toast.success(`Please login into your shiny new account`);
         },
         onError: (err) => {
@@ -95,6 +104,9 @@ const SignupPage = () => {
   const toggleConfirmPasswordVisibility = () => {
     setValue("showConfirmPassword", !showConfirmPasswordValue);
   };
+  if (authUser) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center-p-6 sm:p-12">

@@ -19,5 +19,6 @@ export function transformToClientUser (serverUser: ServerUser): User {
   profilepic: serverUser.profile_pic,
   createdAt: serverUser.created_at,
   updatedAt: serverUser.updated_at,
+  publicKey: serverUser.public_key,
  }
 }
