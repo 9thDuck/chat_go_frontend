@@ -17,6 +17,7 @@ export type LoginCredentials = {
   password: string;
 };
 
-export type LoginResponse = {
+
+export type UserResponse = {
   data: User;
 };
