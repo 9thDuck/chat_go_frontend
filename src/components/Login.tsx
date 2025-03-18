@@ -8,7 +8,7 @@ import { z } from "zod";
 import logo from "@/assets/duck.svg";
 import { transformToClientUser } from "@/lib/auth-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "react-router-dom";
+import { Link, useNavigate, useLocation, Navigate } from "react-router-dom";
 import { ServerUser } from "@/types/user";
 
 const loginFormSchema = z.object({
@@ -41,7 +41,9 @@ const LoginPage = () => {
   });
 
   const { mutate, isPending } = useLogin();
-  const { setAuthUser } = useAuthStore();
+  const { authUser, setAuthUser } = useAuthStore();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const onSubmit: SubmitHandler<LoginFormData> = (formData) => {
     mutate(
@@ -51,6 +53,8 @@ const LoginPage = () => {
           const user = transformToClientUser(res.data.data as ServerUser);
           toast.success(`Welcome to DuckChat, ${user.username}`);
           setAuthUser(user);
+          const from = location.state?.from || "/";
+          navigate(from, { replace: true });
         },
         onError: (err) => {
           toast.error(err.message);
@@ -64,6 +68,10 @@ const LoginPage = () => {
   const togglePasswordVisibility = () => {
     setValue("showPassword", !showPasswordValue);
   };
+
+  if (authUser) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex flex-col justify-center items-center p-6 sm:p-12">

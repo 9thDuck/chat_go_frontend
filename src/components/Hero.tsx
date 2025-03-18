@@ -42,51 +42,49 @@ export const AnimatedHeroCarousel = ({
 
   return (
     <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
-      <div className="relative grid grid-cols-1 gap-20 md:grid-cols-2">
-        <div>
-          <div className="relative h-80 w-full">
-            <AnimatePresence>
-              {slides.map((slide, index) => (
-                <motion.div
-                  key={slide.image}
-                  initial={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: -100,
-                    rotate: randomRotateY(),
-                  }}
-                  animate={{
-                    opacity: isActive(index) ? 1 : 0.7,
-                    scale: isActive(index) ? 1 : 0.95,
-                    z: isActive(index) ? 0 : -100,
-                    rotate: isActive(index) ? 0 : randomRotateY(),
-                    zIndex: isActive(index) ? 40 : slides.length + 2 - index,
-                    y: isActive(index) ? [0, -80, 0] : 0,
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.9,
-                    z: 100,
-                    rotate: randomRotateY(),
-                  }}
-                  transition={{
-                    duration: 0.4,
-                    ease: "easeInOut",
-                  }}
-                  className="absolute inset-0 origin-bottom flex items-center justify-center"
-                >
-                  <img
-                    src={slide.image}
-                    alt={slide.title}
-                    draggable={false}
-                    className=" object-contain"
-                  />
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </div>
+      <div className="relative grid grid-cols-1 gap-48">
+        <div className="relative h-80 w-full">
+          <AnimatePresence>
+            {slides.map((slide, index) => (
+              <motion.div
+                key={slide.image}
+                initial={{
+                  opacity: 0,
+                  scale: 0.9,
+                  z: -100,
+                  rotate: randomRotateY(),
+                }}
+                animate={{
+                  opacity: isActive(index) ? 1 : 0.7,
+                  scale: isActive(index) ? 1 : 0.95,
+                  z: isActive(index) ? 0 : -100,
+                  rotate: isActive(index) ? 0 : randomRotateY(),
+                  zIndex: isActive(index) ? 40 : slides.length + 2 - index,
+                  y: isActive(index) ? [0, -80, 0] : 0,
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.9,
+                  z: 100,
+                  rotate: randomRotateY(),
+                }}
+                transition={{
+                  duration: 0.4,
+                  ease: "easeInOut",
+                }}
+                className="absolute inset-0 origin-bottom flex items-center justify-center"
+              >
+                <img
+                  src={slide.image}
+                  alt={slide.title}
+                  draggable={false}
+                  className=" object-contain"
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
-        <div className="flex flex-col justify-between py-4">
+        <div className="flex flex-col justify-center py-4">
           <motion.div
             key={active}
             initial={{
@@ -135,7 +133,7 @@ export const AnimatedHeroCarousel = ({
               ))}
             </motion.p>
           </motion.div>
-          <div className="flex gap-4 pt-12 md:pt-0">
+          <div className="flex justify-center items-center gap-4 pt-12 md:pt-8">
             <button
               onClick={handlePrev}
               className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"

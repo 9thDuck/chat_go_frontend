@@ -17,7 +17,7 @@ export function LogoutNavBtn() {
         mutate(undefined, {
           onSuccess: () => {
             removeAuthUser();
-            navigate("/login");
+            navigate("/auth/login");
             toast.success("You have been successfully logged out");
           },
           onError: (err) => {

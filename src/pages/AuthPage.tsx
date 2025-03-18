@@ -14,7 +14,7 @@ export function AuthPage() {
             <div className="block animate-pulse skeleton w-full min-h-1/2 lg:h-full" />
           }
         >
-          <AnimatedHeroCarousel slides={DUCK_CAROUSEL_SLIDES} />
+          <AnimatedHeroCarousel autoplay slides={DUCK_CAROUSEL_SLIDES} />
         </Suspense>
       </div>
       <Outlet />

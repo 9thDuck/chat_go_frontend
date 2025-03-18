@@ -2,7 +2,7 @@ import { createBrowserRouter } from "react-router-dom";
 import ProfilePage from "./pages/ProfilePage";
 import App from "./App";
 import NotFoundPage from "./pages/NotFoundPage";
-import { ProtectedRoute } from "./components/ProtectRoute";
+import { ProtectRoute } from "./components/ProtectRoute";
 import { lazy, Suspense } from "react";
 const AuthPage = lazy(() =>
   import("@/pages/AuthPage").then((m) => ({ default: m.AuthPage }))
@@ -49,37 +49,37 @@ export const router = createBrowserRouter([
       {
         index: true,
         element: (
-          <ProtectedRoute>
+          <ProtectRoute>
             <Suspense
               fallback={<div className="loading-xl loading-ring"></div>}
             >
               <HomePage />
             </Suspense>
-          </ProtectedRoute>
+          </ProtectRoute>
         ),
       },
       {
         path: "/settings",
         element: (
-          <ProtectedRoute>
+          <ProtectRoute>
             <Suspense
               fallback={<div className="loading-xl loading-ring"></div>}
             >
               <SettingsPage />
             </Suspense>
-          </ProtectedRoute>
+          </ProtectRoute>
         ),
       },
       {
         path: "/profile",
         element: (
-          <ProtectedRoute>
+          <ProtectRoute>
             <Suspense
               fallback={<div className="loading-xl loading-ring"></div>}
             >
               <ProfilePage />
             </Suspense>
-          </ProtectedRoute>
+          </ProtectRoute>
         ),
       },
       { path: "*", element: <NotFoundPage /> },
