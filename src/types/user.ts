@@ -21,7 +21,7 @@ export type ServerUser = {
   last_name: string;
   public_key: string;
   profile_pic: string;
-  roleId: string;
+  role_id: string;
   role: Role;
   created_at: string;
   updated_at: string;

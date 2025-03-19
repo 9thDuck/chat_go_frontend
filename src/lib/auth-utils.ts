@@ -13,7 +13,11 @@ export function needToAccessAuthRoutes(
 
 export function transformToClientUser (serverUser: ServerUser): User {
  return {
-  ...serverUser,
+  id: serverUser.id,
+  username: serverUser.username,
+  email: serverUser.email,
+  role: serverUser.role,
+  roleId: serverUser.role_id,
   firstname: serverUser.first_name,
   lastname: serverUser.last_name,
   profilepic: serverUser.profile_pic,
