@@ -63,9 +63,9 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container mx-auto px-3 sm:px-4">
-      <div className="flex flex-col items-center justify-center max-w-xl p-4 sm:p-8 border-base-300 border-2 rounded-lg mx-auto">
-        <div className="w-full max-w-sm space-y-8">
+    <div className="container mx-auto px-3 sm:px-4 min-h-full flex items-center justify-center">
+      <div className="flex flex-col items-center justify-center w-full max-w-[320px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] p-4 sm:p-8 border-base-300 border-2 rounded-lg mx-auto">
+        <div className="w-full space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2">
               <div className="avatar placeholder flex justify-center items-center">

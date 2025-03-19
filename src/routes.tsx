@@ -1,9 +1,9 @@
 import { createBrowserRouter } from "react-router-dom";
 import ProfilePage from "./pages/ProfilePage";
-import App from "./App";
 import NotFoundPage from "./pages/NotFoundPage";
 import { ProtectRoute } from "./components/ProtectRoute";
 import { lazy, Suspense } from "react";
+import Layout from "@/layouts/Layout";
 const AuthPage = lazy(() =>
   import("@/pages/AuthPage").then((m) => ({ default: m.AuthPage }))
 );
@@ -11,10 +11,11 @@ const HomePage = lazy(() => import("@/pages/HomePage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
 const Signup = lazy(() => import("@/components/Signup"));
 const Login = lazy(() => import("@/components/Login"));
+
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <App />,
+    element: <Layout />,
     children: [
       {
         path: "/auth",

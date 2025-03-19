@@ -1,14 +1,14 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "./components/Navbar";
+import Navbar from "@/components/Navbar";
 import { Toaster } from "sonner";
-import useThemeStore from "./store/useThemeStore";
+import useThemeStore from "@/store/useThemeStore";
 
-function App() {
+function Layout() {
   const { theme } = useThemeStore();
   return (
     <div className="min-h-screen flex flex-col" data-theme={theme}>
       <Navbar />
-      <main className="flex-1 pt-14 sm:pt-16">
+      <main className="flex-1 pt-14 sm:pt-16 flex min-h-[calc(100vh-3.5rem)] sm:min-h-[calc(100vh-4rem)]">
         <Outlet />
       </main>
       <Toaster />
@@ -16,4 +16,4 @@ function App() {
   );
 }
 
-export default App;
+export default Layout;
