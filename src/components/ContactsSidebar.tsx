@@ -23,7 +23,7 @@ export function ContactsSidebar({
   const { contacts, totalContacts } = useContactsStore();
   const { hasNextPage, isFetchingNextPage, isLoading, fetchNextPage } =
     useGetContacts({
-      searchTerm: debouncedSearch,
+      searchTerm: debouncedSearch.length > 2 ? debouncedSearch : "",
     });
   const parentRef = useRef<HTMLDivElement>(null);
 
@@ -52,7 +52,7 @@ export function ContactsSidebar({
     <div className="h-full flex flex-col border-r border-base-300">
       <div className="p-4 border-b border-base-300">
         <Input
-          placeholder="Search contacts..."
+          placeholder="search term should be between 3 and 50 characters long"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           icon={<Search className="w-4 h-4" />}

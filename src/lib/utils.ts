@@ -12,3 +12,12 @@ export function decryptMessage(encrypted: Buffer<ArrayBufferLike>, privateKey: B
     const decrypted = decrypt(privateKey, encrypted)
     return decoder.decode(decrypted)
 }
+
+export function getSearchParams(paramsArray: string[]): string {
+    return paramsArray.map((param) => {
+        if(param !== "") {
+            return `&${param}`
+        }
+        return ""
+    }).join("")
+}

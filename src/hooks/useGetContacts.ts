@@ -3,6 +3,7 @@ import { api } from "@/lib/api";
 import { ContactsResponse } from "@/types/contact";
 import useContactsStore from "@/store/useContactsStore";
 import { transformToClientUser } from "@/lib/auth-utils";
+import { getSearchParams } from "@/lib/utils";
 const CONTACTS_PER_PAGE = 20;
 
 interface UseContactsQueryParams {
@@ -15,13 +16,19 @@ export function useGetContacts({
   const { setContacts, appendContacts, setTotalContacts } = useContactsStore();
 
   const fetchContacts = async ({ pageParam = 1 }) => {
-      const endpoint = searchTerm ? `/contacts/search?q=${searchTerm}` : "/contacts";
+    const searchParamsArr = [
+      searchTerm ? `q=${searchTerm}` : "",
+      `page=${pageParam}`,
+      `limit=${CONTACTS_PER_PAGE}`,
+      `sort=username`,
+      `sort_direction=ASC`
+    ]
+      const endpoint = searchTerm.length > 0 ? `/contacts/search` : "/contacts"
       const response = await api.get<ContactsResponse>(
-        `${endpoint}?page=${pageParam}&limit=${CONTACTS_PER_PAGE}&sort=username&sort_direction=ASC`
+        `${endpoint}?${getSearchParams(searchParamsArr)}`
       );
       
       const formattedContacts = response.data.data.records.map(transformToClientUser);
-      
       if (pageParam === 1) {
         setContacts(formattedContacts);
       } else {
