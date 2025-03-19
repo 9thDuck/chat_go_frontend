@@ -63,8 +63,8 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="container mx-auto px-4 pt-20">
-      <div className="flex flex-col items-center justify-center p-3 sm:p-6 border-base-300 border-2">
+    <div className="container mx-auto px-3 sm:px-4">
+      <div className="flex flex-col items-center justify-center max-w-xl p-4 sm:p-8 border-base-300 border-2 rounded-lg mx-auto">
         <div className="w-full max-w-sm space-y-8">
           <div className="text-center mb-8">
             <div className="flex flex-col items-center gap-2">
@@ -80,8 +80,10 @@ const ProfilePage = () => {
                   )}
                 </div>
               </div>
-              <h1 className="text-2xl font-bold mt-4">Profile Settings</h1>
-              <p className="text-base-content/60">
+              <h1 className="text-2xl font-bold mt-4 text-base-content">
+                Profile Settings
+              </h1>
+              <p className="text-base-content/70 text-sm sm:text-base">
                 Update your profile information
               </p>
             </div>

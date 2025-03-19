@@ -1,15 +1,17 @@
-import { FormInputWrapper } from "@/components/FormInputWrapper";
+import { Input } from "./Input";
+import { PasswordInput } from "./PasswordInput";
+import { AuthCard } from "./AuthCard";
+import { AuthLink } from "./AuthLink";
+import { IconWrapper } from "./IconWrapper";
+import { Lock, Mail, User } from "lucide-react";
 import { useNavgiateToHomeIfLoggedIn } from "@/components/NavigateToHomeIfLoggedIn";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
-import { User } from "lucide-react";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import logo from "@/assets/duck.svg";
 import { useSignup } from "@/hooks/useSignup";
 import { useAuthStore } from "@/store/useAuthStore";
 import { toast } from "sonner";
-import { Link, useNavigate, Navigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { ECIES_CONFIG, PrivateKey } from "eciesjs";
 
@@ -46,8 +48,6 @@ const SignupPage = () => {
   useNavgiateToHomeIfLoggedIn();
   const {
     register,
-    watch,
-    setValue,
     handleSubmit,
     formState: { errors: formErrors, isDirty },
   } = useForm<SignUpFormData>({
@@ -61,7 +61,7 @@ const SignupPage = () => {
     },
     resolver: zodResolver(signupFormSchema),
   });
-  const { authUser, removeAuthUser } = useAuthStore();
+  const { removeAuthUser } = useAuthStore();
 
   const { mutate, isPending } = useSignup();
   const navigate = useNavigate();
@@ -94,119 +94,60 @@ const SignupPage = () => {
     );
   };
 
-  const showPasswordValue = watch("showPassword");
-  const showConfirmPasswordValue = watch("showConfirmPassword");
-
-  const togglePasswordVisibility = () => {
-    setValue("showPassword", !showPasswordValue);
-  };
-
-  const toggleConfirmPasswordVisibility = () => {
-    setValue("showConfirmPassword", !showConfirmPasswordValue);
-  };
-  if (authUser) {
-    return <Navigate to="/" replace />;
-  }
-
   return (
-    <div className="flex flex-col justify-center items-center-p-6 sm:p-12">
-      <div className="w-full max-w-md space-y-8 mx-auto">
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center gap-2 group">
-            <div className="size-auto rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <img src={logo} className="size-20 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold mt-2">Create Account</h1>
-            <p className="text-base-content/60">
-              Get started with your free account
-            </p>
-          </div>
-        </div>
+    <AuthCard
+      title="Create Account"
+      subtitle="Get started with your free account"
+      formContent={
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <FormInputWrapper
-            icon={<User className="size-5 text-base-content/40" />}
+          <Input
             id="username"
-            labelText="Username"
-            errorMsg={formErrors.username?.message ?? ""}
-            inputElement={
-              <input
-                id="username"
-                placeholder="MrQuack"
-                className="input input-bordered w-full pl-10"
-                {...register("username")}
-              />
+            label="Username"
+            icon={
+              <IconWrapper>
+                <User />
+              </IconWrapper>
             }
+            placeholder="MrQuack"
+            error={formErrors.username?.message}
+            {...register("username")}
           />
-          <FormInputWrapper
+          <Input
             id="email"
-            labelText="Email"
-            icon={<Mail className="size-5 text-base-content/40" />}
-            errorMsg={formErrors.email?.message ?? ""}
-            inputElement={
-              <input
-                id="email"
-                placeholder="yourmail@site.com"
-                className="input input-bordered w-full pl-10"
-                type="email"
-                {...register("email")}
-              />
+            label="Email"
+            icon={
+              <IconWrapper>
+                <Mail />
+              </IconWrapper>
             }
+            placeholder="yourmail@site.com"
+            type="email"
+            error={formErrors.email?.message}
+            {...register("email")}
           />
-          <FormInputWrapper
+          <PasswordInput
             id="password"
-            labelText="Password"
-            icon={<Lock className="size-5 text-base-content/40" />}
-            errorMsg={formErrors.password?.message ?? ""}
-            inputElement={
-              <>
-                <input
-                  id="password"
-                  placeholder="********"
-                  className="input input-bordered w-full pl-10"
-                  type={showPasswordValue ? "text" : "password"}
-                  {...register("password")}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPasswordValue ? (
-                    <EyeOff className="size-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="size-5 text-base-content/40" />
-                  )}
-                </button>
-              </>
+            label="Password"
+            icon={
+              <IconWrapper>
+                <Lock />
+              </IconWrapper>
             }
+            placeholder="********"
+            error={formErrors.password?.message}
+            {...register("password")}
           />
-          <FormInputWrapper
+          <PasswordInput
             id="confirmPassword"
-            labelText="Confirm Password"
-            errorMsg={formErrors.confirmPassword?.message ?? ""}
-            icon={<Lock className="size-5 text-base-content/40" />}
-            inputElement={
-              <>
-                <input
-                  id="confirmPassword"
-                  placeholder="********"
-                  className="input input-bordered w-full pl-10"
-                  type={showConfirmPasswordValue ? "text" : "password"}
-                  {...register("confirmPassword")}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer"
-                  onClick={toggleConfirmPasswordVisibility}
-                >
-                  {showConfirmPasswordValue ? (
-                    <EyeOff className="size-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="size-5 text-base-content/40" />
-                  )}
-                </button>
-              </>
+            label="Confirm Password"
+            icon={
+              <IconWrapper>
+                <Lock />
+              </IconWrapper>
             }
+            placeholder="********"
+            error={formErrors.confirmPassword?.message}
+            {...register("confirmPassword")}
           />
           <button
             type="submit"
@@ -214,23 +155,20 @@ const SignupPage = () => {
             disabled={isPending || !isDirty}
           >
             {isPending ? (
-              <div className="loading-md loading-ring"></div>
+              <div className="loading loading-ring loading-md" />
             ) : (
               "Submit"
             )}
           </button>
         </form>
-        <div className="text-center">
-          <p className="mx-auto">
-            Already have an account?{" "}
-            <Link to="/auth/login" className="link-secondary">
-              Login
-            </Link>
-            &nbsp;instead
-          </p>
-        </div>
-      </div>
-    </div>
+      }
+      footer={
+        <p className="text-center">
+          Already have an account? <AuthLink to="/auth/login">Login</AuthLink>
+          &nbsp;instead
+        </p>
+      }
+    />
   );
 };
 

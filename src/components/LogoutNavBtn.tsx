@@ -10,9 +10,10 @@ export function LogoutNavBtn() {
   const navigate = useNavigate();
   return (
     <button
-      className="btn btn-sm gap-2 transition-colors"
+      className="btn btn-sm gap-2 transition-all hover:bg-base-200 active:bg-base-300 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:opacity-50"
       type="button"
       disabled={isPending}
+      aria-label="Logout"
       onClick={() =>
         mutate(undefined, {
           onSuccess: () => {

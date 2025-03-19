@@ -21,6 +21,6 @@ export const UNAUTHENTICATED_NAV_ITEMS = [
   {
     path: "auth/login",
     icon: null,
-    name: "login",
+    name: "Login",
   },
 ];

@@ -1,15 +1,18 @@
-import { FormInputWrapper } from "@/components/FormInputWrapper";
-import { useLogin } from "@/hooks/useLogin";
-import { useAuthStore } from "@/store/useAuthStore";
-import { Eye, EyeOff, Lock, Mail } from "lucide-react";
+import { Input } from "./Input";
+import { PasswordInput } from "./PasswordInput";
+import { AuthCard } from "./AuthCard";
+import { AuthLink } from "./AuthLink";
+import { IconWrapper } from "./IconWrapper";
+import { Lock, Mail } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import logo from "@/assets/duck.svg";
 import { transformToClientUser } from "@/lib/auth-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate, useLocation, Navigate } from "react-router-dom";
+import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { ServerUser } from "@/types/user";
+import { useLogin } from "@/hooks/useLogin";
+import { useAuthStore } from "@/store/useAuthStore";
 
 const loginFormSchema = z.object({
   email: z
@@ -28,9 +31,7 @@ type LoginFormData = z.infer<typeof loginFormSchema>;
 const LoginPage = () => {
   const {
     register,
-    watch,
     handleSubmit,
-    setValue,
     formState: { errors, isDirty },
   } = useForm({
     defaultValues: {
@@ -63,92 +64,61 @@ const LoginPage = () => {
     );
   };
 
-  const showPasswordValue = watch("showPassword");
-
-  const togglePasswordVisibility = () => {
-    setValue("showPassword", !showPasswordValue);
-  };
-
   if (authUser) {
     return <Navigate to="/" replace />;
   }
 
   return (
-    <div className="flex flex-col justify-center items-center p-6 sm:p-12">
-      <div className="w-full max-w-md space-y-8 self-center">
-        <div className="text-center mb-8">
-          <div className="flex flex-col items-center gap-2 group">
-            <div className="size-auto rounded-xl bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-              <img src={logo} className="size-20 text-primary" />
-            </div>
-            <h1 className="text-2xl font-bold mt-2">Login</h1>
-            <p className="text-base-content/60">It's nice to see you again</p>
-          </div>
-        </div>
+    <AuthCard
+      title="Login"
+      subtitle="It's nice to see you again"
+      formContent={
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <FormInputWrapper
+          <Input
             id="email"
-            labelText="Email"
-            icon={<Mail className="size-5 text-base-content/40" />}
-            errorMsg={errors.email?.message ?? ""}
-            inputElement={
-              <input
-                id="email"
-                placeholder="yourmail@site.com"
-                className="input input-bordered w-full pl-10"
-                type="email"
-                {...register("email")}
-              />
+            label="Email"
+            icon={
+              <IconWrapper>
+                <Mail />
+              </IconWrapper>
             }
+            placeholder="yourmail@site.com"
+            type="email"
+            error={errors.email?.message}
+            {...register("email")}
           />
-          <FormInputWrapper
+          <PasswordInput
             id="password"
-            labelText="Password"
-            icon={<Lock className="size-5 text-base-content/40" />}
-            errorMsg={errors.password?.message ?? ""}
-            inputElement={
-              <>
-                <input
-                  id="password"
-                  placeholder="********"
-                  className="input input-bordered w-full pl-10"
-                  type={showPasswordValue ? "text" : "password"}
-                  {...register("password")}
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={togglePasswordVisibility}
-                >
-                  {showPasswordValue ? (
-                    <EyeOff className="size-5 text-base-content/40" />
-                  ) : (
-                    <Eye className="size-5 text-base-content/40" />
-                  )}
-                </button>
-              </>
+            label="Password"
+            icon={
+              <IconWrapper>
+                <Lock />
+              </IconWrapper>
             }
+            placeholder="********"
+            error={errors.password?.message}
+            {...register("password")}
           />
-
           <button
             type="submit"
             className="btn btn-primary w-full"
             disabled={isPending || !isDirty}
           >
-            {isPending ? <div className="loader-md loading-ring" /> : "Submit"}
+            {isPending ? (
+              <div className="loading loading-ring loading-md" />
+            ) : (
+              "Submit"
+            )}
           </button>
         </form>
-        <div>
-          <p className="mx-auto text-center">
-            Wanna create an account?{" "}
-            <Link to="/auth/signup" className="link-secondary">
-              Signup
-            </Link>
-            &nbsp;instead
-          </p>
-        </div>
-      </div>
-    </div>
+      }
+      footer={
+        <p className="text-center">
+          Wanna create an account? <AuthLink to="/auth/signup">Signup</AuthLink>
+          &nbsp;instead
+        </p>
+      }
+    />
   );
 };
 

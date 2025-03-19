@@ -6,10 +6,11 @@ import useThemeStore from "./store/useThemeStore";
 function App() {
   const { theme } = useThemeStore();
   return (
-    <div className="min-h-screen" data-theme={theme}>
+    <div className="min-h-screen flex flex-col" data-theme={theme}>
       <Navbar />
-      <div className="h-16 p-8"> </div>
-      <Outlet />
+      <main className="flex-1 pt-14 sm:pt-16">
+        <Outlet />
+      </main>
       <Toaster />
     </div>
   );

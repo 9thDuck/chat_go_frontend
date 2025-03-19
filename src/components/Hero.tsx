@@ -41,9 +41,9 @@ export const AnimatedHeroCarousel = ({
   };
 
   return (
-    <div className="mx-auto max-w-sm px-4 py-20 font-sans antialiased md:max-w-4xl md:px-8 lg:px-12">
-      <div className="relative grid grid-cols-1 gap-48">
-        <div className="relative h-80 w-full">
+    <div className="container mx-auto px-4 py-8 sm:py-12 md:py-16 lg:py-20">
+      <div className="relative grid grid-cols-1 gap-4 sm:gap-8 md:gap-12 lg:gap-16">
+        <div className="relative h-48 sm:h-64 md:h-96 lg:h-[450px] w-full">
           <AnimatePresence>
             {slides.map((slide, index) => (
               <motion.div
@@ -60,7 +60,7 @@ export const AnimatedHeroCarousel = ({
                   z: isActive(index) ? 0 : -100,
                   rotate: isActive(index) ? 0 : randomRotateY(),
                   zIndex: isActive(index) ? 40 : slides.length + 2 - index,
-                  y: isActive(index) ? [0, -80, 0] : 0,
+                  y: isActive(index) ? [0, -40, 0] : 0,
                 }}
                 exit={{
                   opacity: 0,
@@ -72,19 +72,19 @@ export const AnimatedHeroCarousel = ({
                   duration: 0.4,
                   ease: "easeInOut",
                 }}
-                className="absolute inset-0 origin-bottom flex items-center justify-center"
+                className="absolute inset-0 origin-bottom flex items-center justify-center p-4"
               >
                 <img
                   src={slide.image}
                   alt={slide.title}
                   draggable={false}
-                  className=" object-contain"
+                  className="object-contain max-h-full w-auto max-w-full lg:max-w-[90%] xl:max-w-[85%] 2xl:max-w-[80%]"
                 />
               </motion.div>
             ))}
           </AnimatePresence>
         </div>
-        <div className="flex flex-col justify-center py-4">
+        <div className="flex flex-col justify-center py-4 px-4 sm:px-6 md:px-8">
           <motion.div
             key={active}
             initial={{
@@ -103,11 +103,12 @@ export const AnimatedHeroCarousel = ({
               duration: 0.2,
               ease: "easeInOut",
             }}
+            className="text-center sm:text-left flex flex-col items-center justify-center"
           >
-            <h3 className="text-2xl font-bold text-black dark:text-white">
+            <h3 className="text-xl sm:text-2xl md:text-3xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
               {slides[active].title}
             </h3>
-            <motion.p className="mt-8 text-lg text-gray-500 dark:text-neutral-300">
+            <motion.p className="mt-4 sm:mt-6 md:mt-8 text-base sm:text-lg md:text-xl text-base-content/80">
               {slides[active].description.split(" ").map((word, index) => (
                 <motion.span
                   key={index}
@@ -122,9 +123,9 @@ export const AnimatedHeroCarousel = ({
                     y: 0,
                   }}
                   transition={{
-                    duration: 0.2,
+                    duration: 0.3,
                     ease: "easeInOut",
-                    delay: 0.02 * index,
+                    delay: 0.025 * index,
                   }}
                   className="inline-block"
                 >
@@ -133,18 +134,18 @@ export const AnimatedHeroCarousel = ({
               ))}
             </motion.p>
           </motion.div>
-          <div className="flex justify-center items-center gap-4 pt-12 md:pt-8">
+          <div className="flex justify-center items-center gap-4 pt-6 sm:pt-8 md:pt-10">
             <button
               onClick={handlePrev}
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
+              className="group/button flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-base-200 hover:bg-base-300 transition-colors hover:shadow-md"
             >
-              <ArrowLeft className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:rotate-12 dark:text-neutral-400" />
+              <ArrowLeft className="h-4 w-4 sm:h-5 sm:w-5 text-base-content transition-transform duration-300 group-hover/button:rotate-12" />
             </button>
             <button
               onClick={handleNext}
-              className="group/button flex h-7 w-7 items-center justify-center rounded-full bg-gray-100 dark:bg-neutral-800"
+              className="group/button flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-base-200 hover:bg-base-300 transition-colors hover:shadow-md transition-shadow duration-300"
             >
-              <ArrowRight className="h-5 w-5 text-black transition-transform duration-300 group-hover/button:-rotate-12 dark:text-neutral-400" />
+              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 text-base-content transition-transform duration-300 group-hover/button:-rotate-12" />
             </button>
           </div>
         </div>
