@@ -1,14 +1,20 @@
 import { createBrowserRouter } from "react-router-dom";
-import ProfilePage from "./pages/ProfilePage";
-import NotFoundPage from "./pages/NotFoundPage";
-import { ProtectRoute } from "./components/ProtectRoute";
 import { lazy, Suspense } from "react";
 import Layout from "@/layouts/Layout";
+import { ChatLayout } from "@/layouts/ChatLayout";
+import { ProtectRoute } from "./components/ProtectRoute";
+import NotFoundPage from "./pages/NotFoundPage";
+import { LoadingIndicator } from "@/components/LoadingIndicator";
+
 const AuthPage = lazy(() =>
   import("@/pages/AuthPage").then((m) => ({ default: m.AuthPage }))
 );
 const HomePage = lazy(() => import("@/pages/HomePage"));
+const ChatPage = lazy(() => import("@/pages/ChatPage"));
+const ContactDetailsPage = lazy(() => import("@/pages/ContactDetailsPage"));
+const AddContactPage = lazy(() => import("@/pages/AddContactPage"));
 const SettingsPage = lazy(() => import("@/pages/SettingsPage"));
+const ProfilePage = lazy(() => import("@/pages/ProfilePage"));
 const Signup = lazy(() => import("@/components/Signup"));
 const Login = lazy(() => import("@/components/Login"));
 
@@ -18,9 +24,51 @@ export const router = createBrowserRouter([
     element: <Layout />,
     children: [
       {
+        path: "/",
+        element: (
+          <ProtectRoute>
+            <ChatLayout />
+          </ProtectRoute>
+        ),
+        children: [
+          {
+            index: true,
+            element: (
+              <Suspense fallback={<LoadingIndicator />}>
+                <HomePage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "chat/:contactId",
+            element: (
+              <Suspense fallback={<LoadingIndicator />}>
+                <ChatPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "contacts/add",
+            element: (
+              <Suspense fallback={<LoadingIndicator />}>
+                <AddContactPage />
+              </Suspense>
+            ),
+          },
+          {
+            path: "contacts/:contactId",
+            element: (
+              <Suspense fallback={<LoadingIndicator />}>
+                <ContactDetailsPage />
+              </Suspense>
+            ),
+          },
+        ],
+      },
+      {
         path: "/auth",
         element: (
-          <Suspense fallback={<div className="loading-xl loading-ring"></div>}>
+          <Suspense fallback={<LoadingIndicator />}>
             <AuthPage />
           </Suspense>
         ),
@@ -28,9 +76,7 @@ export const router = createBrowserRouter([
           {
             path: "login",
             element: (
-              <Suspense
-                fallback={<div className="loading-xl loading-ring"></div>}
-              >
+              <Suspense fallback={<LoadingIndicator />}>
                 <Login />
               </Suspense>
             ),
@@ -38,9 +84,7 @@ export const router = createBrowserRouter([
           {
             path: "signup",
             element: (
-              <Suspense
-                fallback={<div className="loading-xl loading-ring"></div>}
-              >
+              <Suspense fallback={<LoadingIndicator />}>
                 <Signup />
               </Suspense>
             ),
@@ -48,24 +92,10 @@ export const router = createBrowserRouter([
         ],
       },
       {
-        index: true,
-        element: (
-          <ProtectRoute>
-            <Suspense
-              fallback={<div className="loading-xl loading-ring"></div>}
-            >
-              <HomePage />
-            </Suspense>
-          </ProtectRoute>
-        ),
-      },
-      {
         path: "/settings",
         element: (
           <ProtectRoute>
-            <Suspense
-              fallback={<div className="loading-xl loading-ring"></div>}
-            >
+            <Suspense fallback={<LoadingIndicator />}>
               <SettingsPage />
             </Suspense>
           </ProtectRoute>
@@ -75,9 +105,7 @@ export const router = createBrowserRouter([
         path: "/profile",
         element: (
           <ProtectRoute>
-            <Suspense
-              fallback={<div className="loading-xl loading-ring"></div>}
-            >
+            <Suspense fallback={<LoadingIndicator />}>
               <ProfilePage />
             </Suspense>
           </ProtectRoute>

@@ -13,10 +13,11 @@ export default defineConfig({
     },
   },
   define: {
-    global: 'globalThis',
+    global: "globalThis",
+    "process.env": {},
   },
   optimizeDeps: {
-    include: ['buffer'],
+    include: ["buffer", "eciesjs"],
   },
   build: {
     rollupOptions: {
@@ -30,6 +31,8 @@ export default defineConfig({
             return "noble-hashes";
           } else if (id.includes("buffer")) {
             return "buffer";
+          } else if (id.includes("eciesjs")) {
+            return "eciesjs";
           }
         },
       },

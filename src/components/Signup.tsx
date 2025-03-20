@@ -61,7 +61,7 @@ const SignupPage = () => {
     },
     resolver: zodResolver(signupFormSchema),
   });
-  const { removeAuthUser } = useAuthStore();
+  const { removeAuthUser, setPrivateKey } = useAuthStore();
 
   const { mutate, isPending } = useSignup();
   const navigate = useNavigate();
@@ -69,17 +69,27 @@ const SignupPage = () => {
   const onSubmit: SubmitHandler<SignUpFormData> = async (formData) => {
     console.time("keygen");
     const sk = new PrivateKey();
+    const privateKey = {
+      secret: sk.secret,
+      username: formData.username,
+    };
+    const existingPrivateKey = localStorage.getItem("privateKeys")
+      ? JSON.parse(localStorage.getItem("privateKeys")!)
+      : [];
+    existingPrivateKey.push(privateKey);
+    localStorage.setItem("privateKeys", JSON.stringify(existingPrivateKey));
     console.log("sk", sk.secret);
     mutate(
       {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        public_key: sk.publicKey.toHex(),
+        public_key: sk.publicKey.toHex(true),
       },
       {
         onSuccess: async () => {
           navigate("/auth/login");
+          setPrivateKey(privateKey);
           toast.success(`Please login into your shiny new account`);
         },
         onError: (err) => {
