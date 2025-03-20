@@ -3,7 +3,7 @@ import { lazy, Suspense } from "react";
 import Layout from "@/layouts/Layout";
 import { ChatLayout } from "@/layouts/ChatLayout";
 import { ProtectRoute } from "./components/ProtectRoute";
-import NotFoundPage from "./pages/NotFoundPage";
+import NotFoundPage from "@/pages/NotFoundPage";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
 
 const AuthPage = lazy(() =>

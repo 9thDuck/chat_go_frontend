@@ -1,17 +1,9 @@
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { api } from "@/lib/api";
 import { getSearchParams } from "@/lib/utils";
+import { SearchUsersResponse } from "@/types/contact";
 
-interface SearchUsersResponse {
-  data: {
-    records: {
-      id: number;
-      username: string;
-      public_key: string;
-    }[];
-    total_records: number;
-  };
-}
+
 
 const USERS_PER_PAGE = 10;
 

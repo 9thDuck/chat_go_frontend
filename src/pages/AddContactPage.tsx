@@ -1,14 +1,16 @@
 import { useState, useCallback, useRef } from "react";
-import { Search, UserIcon } from "lucide-react";
+import { Search, UserIcon, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
-import { useSendContactRequest } from "@/hooks/useSendContactRequest";
 import { encryptMessage } from "@/lib/utils";
 import { useSearchUsers } from "@/hooks/useSearchUsers";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/Input";
 import { AxiosError } from "axios";
+import { useSendContactRequest } from "@/hooks/useContactRequest";
+import { useNavigate } from "react-router-dom";
+import { SearchUser } from "@/types/contact";
 
 type SelectedUser = {
   id: number;
@@ -39,6 +41,8 @@ const AddContactPage = () => {
 
   const { mutate, isPending } = useSendContactRequest();
 
+  const navigate = useNavigate();
+
   const handleSendRequest = () => {
     if (!selectedUser) return;
 
@@ -52,6 +56,7 @@ const AddContactPage = () => {
         {
           onSuccess: () => {
             toast.success("Contact request sent successfully");
+            navigate("/?view=requests");
           },
           onError: (error: unknown) => {
             if (error instanceof AxiosError) {
@@ -87,15 +92,38 @@ const AddContactPage = () => {
     [fetchNextPage, hasNextPage, isFetchingNextPage]
   );
 
+  const renderUserStatus = (user: SearchUser) => {
+    if (user.is_contact) {
+      return <span className="badge badge-success">Contact</span>;
+    }
+    if (user.has_pending_request) {
+      return <span className="badge badge-warning">Request Pending</span>;
+    }
+    return (
+      <button
+        className="btn btn-primary btn-sm"
+        onClick={() => setSelectedUser(user)}
+      >
+        Select
+      </button>
+    );
+  };
+
   return (
     <div className="container mx-auto px-3 sm:px-4 min-h-full flex items-center justify-center">
       <div className="flex flex-col items-center justify-center w-full max-w-[320px] sm:max-w-[400px] md:max-w-[500px] lg:max-w-[600px] p-4 sm:p-8 border-base-300 border-2 rounded-lg mx-auto">
         <div className="w-full space-y-8">
-          <div className="text-center mb-8">
+          <div className="flex items-center justify-between mb-8">
             <h1 className="text-2xl font-bold">Add New Contact</h1>
-            <p className="text-base-content/70 text-sm sm:text-base mt-2">
-              Search and connect with other users
-            </p>
+            {selectedUser && (
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="btn btn-ghost btn-sm gap-2"
+              >
+                <ArrowLeft className="w-4 h-4" />
+                Back to Search
+              </button>
+            )}
           </div>
 
           {selectedUser ? (
@@ -218,12 +246,7 @@ const AddContactPage = () => {
                                 <h3 className="font-medium">{user.username}</h3>
                               </div>
                             </div>
-                            <button
-                              className="btn btn-primary btn-sm"
-                              onClick={() => setSelectedUser(user)}
-                            >
-                              Select
-                            </button>
+                            {renderUserStatus(user)}
                           </div>
                         </div>
                       );
