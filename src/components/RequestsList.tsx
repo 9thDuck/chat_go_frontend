@@ -54,7 +54,11 @@ export function RequestsList({
   );
 
   if (isLoading) {
-    return <LoadingIndicator />;
+    return (
+      <div className="h-full">
+        <LoadingIndicator />
+      </div>
+    );
   }
 
   if (requests.length === 0) {

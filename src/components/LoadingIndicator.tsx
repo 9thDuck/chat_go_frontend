@@ -9,13 +9,13 @@ interface LoadingSpinnerProps {
 }
 
 export function LoadingIndicator({
-  size = "md",
+  size = "lg",
   className,
   fullPage = false,
 }: LoadingSpinnerProps) {
   if (fullPage) {
     return (
-      <div className="flex items-center justify-center w-full h-full min-h-[200px]">
+      <div className="flex items-center justify-center w-full h-full">
         <div
           className={cn(`loading loading-ring loading-${size}`, className)}
         />
@@ -24,6 +24,8 @@ export function LoadingIndicator({
   }
 
   return (
-    <div className={cn(`loading loading-ring loading-${size}`, className)} />
+    <div className="flex items-center justify-center w-full h-full min-h-[100px]">
+      <div className={cn(`loading loading-ring loading-${size}`, className)} />
+    </div>
   );
 }

@@ -10,7 +10,11 @@ export default function ContactDetailsPage() {
   const contact = contacts.find((c) => c.id === Number(contactId));
 
   if (!contact) {
-    return <LoadingIndicator />;
+    return (
+      <div className="h-full">
+        <LoadingIndicator />
+      </div>
+    );
   }
 
   return <ContactDetails contact={contact} />;

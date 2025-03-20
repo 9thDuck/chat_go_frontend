@@ -82,7 +82,7 @@ export function useSendContactRequest() {
           message,
         });
 
-        // If it's a 204 response, construct the request object from the input data
+        // In this case backend will send 204 res, so we construct the request object from the input data
         if (response.status === 204) {
           return {
             senderId: authUser!.id,
@@ -93,7 +93,7 @@ export function useSendContactRequest() {
           };
         }
 
-        // If we have data, transform it
+        // If we have data, transform it, in case we change the backend in the future so that it sends the response object
         return transformToClientContactRequest(response.data.data);
       } catch (error) {
         console.error("Error sending contact request:", error);
