@@ -2,8 +2,6 @@ import { UserIcon, MoreVertical } from "lucide-react";
 import { VirtualList } from "@/components/VirtualList";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
 import { Link } from "react-router-dom";
-import { ServerUser } from "@/types/user";
-import { transformToClientUser } from "@/lib/auth-utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,13 +10,14 @@ import {
 } from "@/components/ui/DropdownMenu";
 import { useDeleteContact } from "@/hooks/useContacts";
 import { toast } from "sonner";
+import { User } from "@/types/user";
 
 interface ContactsListProps {
   isLoading: boolean;
   data:
     | {
         pages: Array<{
-          records: ServerUser[];
+          records: User[];
           total_records: number;
         }>;
       }
@@ -37,9 +36,7 @@ export function ContactsList({
   searchTerm,
   parentRef,
 }: ContactsListProps) {
-  const contacts =
-    data?.pages.flatMap((page) => page.records.map(transformToClientUser)) ??
-    [];
+  const contacts = data?.pages.flatMap((page) => page.records) ?? [];
   const { mutate: deleteContact } = useDeleteContact();
 
   if (isLoading) {

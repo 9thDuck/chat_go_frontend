@@ -7,10 +7,8 @@ import { Lock, Mail } from "lucide-react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { transformToClientUser } from "@/lib/auth-utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
-import { ServerUser } from "@/types/user";
 import { useLogin } from "@/hooks/useLogin";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -51,9 +49,8 @@ const LoginPage = () => {
       { email: formData.email, password: formData.password },
       {
         onSuccess: (res) => {
-          const user = transformToClientUser(res.data.data as ServerUser);
-          toast.success(`Welcome to DuckChat, ${user.username}`);
-          setAuthUser(user);
+          toast.success(`Welcome to DuckChat, ${res.data.data.username}`);
+          setAuthUser(res.data.data);
           const from = location.state?.from || "/";
           navigate(from, { replace: true });
         },

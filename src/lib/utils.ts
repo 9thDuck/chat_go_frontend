@@ -4,14 +4,16 @@ import { bytesToHex, hexToBytes } from "@noble/ciphers/utils";
 // Configure ECIES to use XChaCha20 and compressed keys
 ECIES_CONFIG.ellipticCurve = "x25519";
 ECIES_CONFIG.symmetricAlgorithm = "xchacha20";
-ECIES_CONFIG.isEphemeralKeyCompressed = true;
-ECIES_CONFIG.isHkdfKeyCompressed = true;
+// ECIES_CONFIG.isEphemeralKeyCompressed = true;
+// ECIES_CONFIG.isHkdfKeyCompressed = true;
 
 export function encryptMessage(message: string, publicKeyHex: string): string {
   const encoder = new TextEncoder();
   const messageBytes = encoder.encode(message);
-  const publicKey = PublicKey.fromHex(publicKeyHex);
-  const encrypted = encrypt(publicKey.toHex(), messageBytes);
+  const encrypted = encrypt(
+    PublicKey.fromHex(publicKeyHex).toBytes(),
+    messageBytes
+  );
   return bytesToHex(encrypted);
 }
 

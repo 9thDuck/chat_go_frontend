@@ -1,15 +1,7 @@
 import { PaginatedResponse } from "./pagination";
-import { ServerUser } from "./user";
+import { User } from "./user";
 
-export type ContactsResponse = PaginatedResponse<ServerUser>;
-
-export type ServerContactRequest = {
-  sender_id: number;
-  receiver_id: number;
-  created_at: string;
-  sender_username: string;
-  receiver_username: string;
-};
+export type ContactsResponse = PaginatedResponse<User>;
 
 export type ContactRequest = {
   senderId: number;
@@ -19,18 +11,18 @@ export type ContactRequest = {
   receiverUsername: string;
 };
 
-export type ContactRequestsResponse = PaginatedResponse<ServerContactRequest>;
+export type ContactRequestsResponse = PaginatedResponse<ContactRequest>;
 export interface SearchUser {
   id: number;
   username: string;
-  public_key: string;
-  is_contact: boolean;
-  has_pending_request: boolean;
+  publicKey: string;
+  isContact: boolean;
+  hasPendingRequest: boolean;
 }
 
 export interface SearchUsersResponse {
   data: {
     records: SearchUser[];
-    total_records: number;
+    totalRecords: number;
   };
 }

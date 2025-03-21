@@ -9,13 +9,12 @@ import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/Input";
 import { AxiosError } from "axios";
 import { useSendContactRequest } from "@/hooks/useContactRequest";
-import { useNavigate } from "react-router-dom";
 import { SearchUser } from "@/types/contact";
 
 type SelectedUser = {
   id: number;
   username: string;
-  public_key: string;
+  publicKey: string;
 } | null;
 
 const AddContactPage = () => {
@@ -41,13 +40,12 @@ const AddContactPage = () => {
 
   const { mutate, isPending } = useSendContactRequest();
 
-  const navigate = useNavigate();
-
   const handleSendRequest = () => {
     if (!selectedUser) return;
 
     try {
-      const encryptedMessage = encryptMessage(message, selectedUser.public_key);
+      console.log(selectedUser);
+      const encryptedMessage = encryptMessage(message, selectedUser.publicKey);
       mutate(
         {
           userId: selectedUser.id,
@@ -56,9 +54,9 @@ const AddContactPage = () => {
         {
           onSuccess: () => {
             toast.success("Contact request sent successfully");
-            navigate("/?view=requests");
           },
           onError: (error: unknown) => {
+            console.log(error);
             if (error instanceof AxiosError) {
               toast.error(error.response?.data.error);
             } else {
@@ -73,6 +71,7 @@ const AddContactPage = () => {
           error.response?.data?.message || "Failed to send contact request"
         );
       } else {
+        console.log(error);
         toast.error("Failed to send contact request");
       }
     }
@@ -93,10 +92,10 @@ const AddContactPage = () => {
   );
 
   const renderUserStatus = (user: SearchUser) => {
-    if (user.is_contact) {
+    if (user.isContact) {
       return <span className="badge badge-success">Contact</span>;
     }
-    if (user.has_pending_request) {
+    if (user.hasPendingRequest) {
       return <span className="badge badge-warning">Request Pending</span>;
     }
     return (

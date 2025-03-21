@@ -5,5 +5,5 @@ export type SignupCredentials = LoginCredentials & {
 };
 
 export type SignupPayload = SignupCredentials & {
-  public_key: string;
+  publicKey: string;
 };

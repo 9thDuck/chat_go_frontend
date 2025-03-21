@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { AxiosError } from "axios";
 import { api } from "@/lib/api";
 import { UserResponse } from "@/types/user";
-import { transformToClientUser } from "@/lib/auth-utils";
+
 export function useCheckAuth() {
   const { authUser, setAuthUser } = useAuthStore();
   const {
@@ -28,7 +28,7 @@ export function useCheckAuth() {
   useEffect(() => {
     if (authUser || isFetching || isError || !fetchedUser) return;
 
-    setAuthUser(transformToClientUser(fetchedUser));
+    setAuthUser(fetchedUser);
   }, [authUser, fetchedUser, isError, isFetching, setAuthUser]);
 
   return {

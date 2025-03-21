@@ -78,13 +78,12 @@ const SignupPage = () => {
       : [];
     existingPrivateKey.push(privateKey);
     localStorage.setItem("privateKeys", JSON.stringify(existingPrivateKey));
-    console.log("sk", sk.secret);
     mutate(
       {
         username: formData.username,
         email: formData.email,
         password: formData.password,
-        public_key: sk.publicKey.toHex(true),
+        publicKey: sk.publicKey.toHex(true),
       },
       {
         onSuccess: async () => {

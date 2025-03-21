@@ -7,7 +7,6 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { useUpdateUser } from "@/hooks/useUpdateUser";
 import { AxiosError } from "axios";
-import { transformToClientUser } from "@/lib/auth-utils";
 
 const profileFormSchema = z.object({
   first_name: z
@@ -49,8 +48,7 @@ const ProfilePage = () => {
       },
       {
         onSuccess: (res) => {
-          const updatedUser = transformToClientUser(res.data.data);
-          setAuthUser(updatedUser);
+          setAuthUser(res.data.data);
           toast.success("Profile updated successfully");
         },
         onError: (err) => {

@@ -7,10 +7,9 @@ import {
 import { api } from "@/lib/api";
 import { ContactsResponse } from "@/types/contact";
 import useContactsStore from "@/store/useContactsStore";
-import { transformToClientUser } from "@/lib/auth-utils";
 import { getSearchParams } from "@/lib/utils";
-import { ServerUser } from "@/types/user";
 import { useNavigate, useLocation } from "react-router-dom";
+import { User } from "@/types/user";
 
 const CONTACTS_PER_PAGE = 20;
 
@@ -36,13 +35,10 @@ export function useGetContacts({
       `${endpoint}?${getSearchParams(searchParamsArr)}`
     );
 
-    const formattedContacts = response.data.data.records.map(
-      transformToClientUser
-    );
     if (pageParam === 1) {
-      setContacts(formattedContacts);
+      setContacts(response.data.data.records);
     } else {
-      appendContacts(formattedContacts);
+      appendContacts(response.data.data.records);
     }
     setTotalContacts(response.data.data.total_records);
 
@@ -75,7 +71,7 @@ export function useDeleteContact() {
 
       const previousData = queryClient.getQueryData<
         InfiniteData<{
-          records: ServerUser[];
+          records: User[];
           total_records: number;
         }>
       >(["contacts"]);

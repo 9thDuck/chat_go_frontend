@@ -6,12 +6,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 import { api } from "@/lib/api";
-import {
-  ContactRequest,
-  ContactRequestsResponse,
-  ServerContactRequest,
-} from "@/types/contact";
-import { transformToClientContactRequest } from "@/lib/contact-utils";
+import { ContactRequest, ContactRequestsResponse } from "@/types/contact";
 import { InfiniteData } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
 
@@ -77,7 +72,7 @@ export function useSendContactRequest() {
     mutationFn: async ({ userId, message }: SendContactRequestParams) => {
       try {
         const response = await api.post<{
-          data: ServerContactRequest;
+          data: ContactRequest;
         }>(`/contacts/requests/${userId}`, {
           message,
         });
@@ -94,7 +89,7 @@ export function useSendContactRequest() {
         }
 
         // If we have data, transform it, in case we change the backend in the future so that it sends the response object
-        return transformToClientContactRequest(response.data.data);
+        return response.data.data;
       } catch (error) {
         console.error("Error sending contact request:", error);
         throw error;
@@ -268,7 +263,7 @@ export function useGetContactRequests() {
     },
     select: (data) => ({
       pages: data.pages.map((page) => ({
-        records: page.records.map(transformToClientContactRequest),
+        records: page.records,
         total_records: page.total_records,
       })),
       pageParams: data.pageParams,

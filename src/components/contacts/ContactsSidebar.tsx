@@ -8,7 +8,7 @@ import { Link, useSearchParams } from "react-router-dom";
 import { ContactsList } from "@/components/contacts/ContactsList";
 import { useGetContactRequests } from "@/hooks/useContactRequest";
 import { RequestsList } from "@/components/RequestsList";
-import { ServerUser } from "@/types/user";
+import { User } from "@/types/user";
 import { InfiniteData } from "@tanstack/react-query";
 
 type ViewMode = "contacts" | "requests";
@@ -41,7 +41,7 @@ export function ContactsSidebar() {
 
   const typedContactsData:
     | InfiniteData<{
-        records: ServerUser[];
+        records: User[];
         total_records: number;
       }>
     | undefined = contactsData;
