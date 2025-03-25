@@ -9,7 +9,7 @@ import { Message, MessagesResponse } from "@/types/message";
 import { asymDecryptMessage, getSearchParams } from "@/lib/utils";
 import { api } from "@/lib/api";
 import { useMessagesStore } from "@/store/useMessagesStore";
-
+import { swapLocalMessageWithServerMessageId } from "@/lib/offline-storage";
 const MESSAGES_PER_PAGE = 50;
 
 export function useLoadMessages(contactId: number) {
@@ -55,18 +55,39 @@ export function useLoadMessages(contactId: number) {
                 "[Encrypted message - unable to decrypt]";
             }
           } else if (message.senderId === authUser.id) {
-            // If we are the sender, get the original content from IndexedDB
             try {
               const storedMessage = await getMessage(message.id, encryptionKey);
+
               if (storedMessage) {
                 processedMessage.content = storedMessage.content;
               } else {
-                processedMessage.content =
-                  "[Message not found in local storage]";
+                // Handle contact request messages by searching local storage
+                const localMessages = await getMessagesBetweenUsers(
+                  authUser.id,
+                  message.receiverId,
+                  encryptionKey
+                );
+
+                // Find contact request message by creation time proximity (±5s)
+                const contactRequestMessage = localMessages.find(
+                  (m) =>
+                    Math.abs(
+                      new Date(m.createdAt).getTime() -
+                        new Date(message.createdAt).getTime()
+                    ) < 5000
+                );
+
+                if (contactRequestMessage) {
+                  await swapLocalMessageWithServerMessageId(
+                    contactRequestMessage.id,
+                    message.id
+                  );
+                  processedMessage.content = contactRequestMessage.content;
+                }
               }
             } catch (error) {
-              console.error("Failed to get sent message from storage:", error);
-              processedMessage.content = "[Failed to load message content]";
+              console.error("Failed to get sent message:", error);
+              processedMessage.content = "[Failed to load]";
             }
           }
 

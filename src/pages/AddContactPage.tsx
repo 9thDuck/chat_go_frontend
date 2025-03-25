@@ -7,9 +7,12 @@ import { useSearchUsers } from "@/hooks/useSearchUsers";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDebounce } from "@/hooks/useDebounce";
 import { Input } from "@/components/Input";
-import { AxiosError } from "axios";
 import { useSendContactRequest } from "@/hooks/useContactRequest";
 import { SearchUser } from "@/types/contact";
+import { useAuthStore } from "@/store/useAuthStore";
+import { useMessagesStore } from "@/store/useMessagesStore";
+import { storeMessage } from "@/lib/offline-storage";
+import { Message } from "@/types/message";
 
 type SelectedUser = {
   id: number;
@@ -40,6 +43,8 @@ const AddContactPage = () => {
 
   const { mutate, isPending } = useSendContactRequest();
 
+  const { authUser, getEncryptionKey } = useAuthStore();
+  const { addMessage } = useMessagesStore();
   const handleSendRequest = () => {
     if (!selectedUser) return;
 
@@ -57,6 +62,27 @@ const AddContactPage = () => {
         {
           onSuccess: () => {
             toast.success("Contact request sent successfully");
+            // Store contact request message in IDB
+            const localId = `cr-${Date.now()}`;
+            const contactRequestMessage: Message = {
+              id: localId,
+              senderId: authUser!.id,
+              receiverId: selectedUser.id,
+              content: message,
+              isRead: false,
+              isDelivered: false,
+              version: 1,
+              edited: false,
+              createdAt: new Date().toISOString(),
+              updatedAt: new Date().toISOString(),
+              localId,
+            };
+
+            storeMessage(contactRequestMessage, getEncryptionKey())
+              .then(() => addMessage(selectedUser!.id, contactRequestMessage))
+              .catch((error) =>
+                console.error("Failed to store message:", error)
+              );
           },
           onError: (error: unknown) => {
             console.error(
