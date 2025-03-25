@@ -30,9 +30,14 @@ export function useSendMessage() {
         receiverId: params.receiverId,
       };
     },
-    onError: (error) => {
-      console.error("Failed to send message:", error);
-      toast.error("Failed to send message");
+    onError: (error, variables) => {
+      console.error(
+        "Message send failed - Receiver ID:",
+        variables.receiverId,
+        "Error:",
+        error
+      );
+      toast.error("Message failed to send");
     },
   });
 }
