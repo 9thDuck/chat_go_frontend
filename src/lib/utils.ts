@@ -1,4 +1,4 @@
-import { encrypt, decrypt, PublicKey, ECIES_CONFIG } from "eciesjs";
+import { encrypt, decrypt, PublicKey, PrivateKey, ECIES_CONFIG } from "eciesjs";
 import { bytesToHex, hexToBytes } from "@noble/ciphers/utils";
 
 // Configure ECIES to use XChaCha20 and compressed keys
@@ -7,7 +7,10 @@ ECIES_CONFIG.symmetricAlgorithm = "xchacha20";
 // ECIES_CONFIG.isEphemeralKeyCompressed = true;
 // ECIES_CONFIG.isHkdfKeyCompressed = true;
 
-export function encryptMessage(message: string, publicKeyHex: string): string {
+export function asymEncryptMessage(
+  message: string,
+  publicKeyHex: string
+): string {
   const encoder = new TextEncoder();
   const messageBytes = encoder.encode(message);
   const encrypted = encrypt(
@@ -17,14 +20,14 @@ export function encryptMessage(message: string, publicKeyHex: string): string {
   return bytesToHex(encrypted);
 }
 
-export function decryptMessage(
+export function asymDecryptMessage(
   encryptedMessage: string,
   privateKeyHex: string
 ): string {
   const decoder = new TextDecoder();
-  const encryptedMessageBytes = hexToBytes(encryptedMessage);
-  const decryptedMessage = decrypt(privateKeyHex, encryptedMessageBytes);
-  return decoder.decode(decryptedMessage);
+  const privateKey = PrivateKey.fromHex(privateKeyHex);
+  const decrypted = decrypt(privateKey.toHex(), hexToBytes(encryptedMessage));
+  return decoder.decode(decrypted);
 }
 
 export function getSearchParams(paramsArray: string[]): string {

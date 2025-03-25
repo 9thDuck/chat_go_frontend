@@ -1,5 +1,7 @@
 import { UserIcon } from "lucide-react";
 import { User } from "@/types/user";
+import { ChatMessages } from "./ChatMessages";
+import { MessageInput } from "./MessageInput";
 
 interface ChatViewProps {
   contact: User;
@@ -7,7 +9,7 @@ interface ChatViewProps {
 
 export function ChatView({ contact }: ChatViewProps) {
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col h-full">
       <div className="p-4 border-b border-base-300">
         <div className="flex items-center gap-3">
           <div className="avatar placeholder">
@@ -30,7 +32,8 @@ export function ChatView({ contact }: ChatViewProps) {
           </div>
         </div>
       </div>
-      <div className="flex-1">{/* Chat component will go here */}</div>
+      <ChatMessages contactId={contact.id} />
+      <MessageInput contactId={contact.id} publicKey={contact.publicKey} />
     </div>
   );
 }

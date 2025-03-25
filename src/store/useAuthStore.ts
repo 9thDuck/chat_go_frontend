@@ -6,34 +6,24 @@ interface Store {
   authUser: User | null;
   setAuthUser: (user: User) => void;
   removeAuthUser: () => void;
-  privateKeys: {
-    secret: Buffer<ArrayBufferLike>;
-    username: string;
-  }[];
-  setPrivateKey: (key: {
-    secret: Buffer<ArrayBufferLike>;
-    username: string;
-  }) => void;
-  removePrivateKey: (username: string) => void;
+  privateKey: string | null;
+  setPrivateKey: (key: string) => void;
+  removePrivateKey: () => void;
+  getPrivateKey: () => string;
+  getEncryptionKey: () => string;
 }
 
 export const useAuthStore = create<Store>()(
   persist(
-    (set) => ({
+    (set, get) => ({
       authUser: null,
       setAuthUser: (user: User) => set({ authUser: user }),
       removeAuthUser: () => set({ authUser: null }),
-      privateKeys: [],
-      setPrivateKey: (key: {
-        secret: Buffer<ArrayBufferLike>;
-        username: string;
-      }) => set((state) => ({ privateKeys: [...state.privateKeys, key] })),
-      removePrivateKey: (username: string) =>
-        set((state) => ({
-          privateKeys: state.privateKeys.filter(
-            (key) => key.username !== username
-          ),
-        })),
+      privateKey: null,
+      setPrivateKey: (key: string) => set({ privateKey: key }),
+      getPrivateKey: () => get().privateKey || "",
+      getEncryptionKey: () => get().authUser?.encryptionKey || "",
+      removePrivateKey: () => set({ privateKey: null }),
     }),
     {
       name: "auth-storage",

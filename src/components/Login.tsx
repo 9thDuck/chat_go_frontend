@@ -11,6 +11,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useNavigate, useLocation, Navigate } from "react-router-dom";
 import { useLogin } from "@/hooks/useLogin";
 import { useAuthStore } from "@/store/useAuthStore";
+import { getPrivateKey } from "@/lib/offline-storage";
 
 const loginFormSchema = z.object({
   email: z
@@ -23,7 +24,6 @@ const loginFormSchema = z.object({
     .max(20, "Password must not be more than 20 characters long"),
   showPassword: z.boolean().default(false),
 });
-
 type LoginFormData = z.infer<typeof loginFormSchema>;
 
 const LoginPage = () => {
@@ -38,21 +38,31 @@ const LoginPage = () => {
     },
     resolver: zodResolver(loginFormSchema),
   });
-
   const { mutate, isPending } = useLogin();
-  const { authUser, setAuthUser } = useAuthStore();
+  const { authUser, setAuthUser, setPrivateKey } = useAuthStore();
   const navigate = useNavigate();
   const location = useLocation();
-
-  const onSubmit: SubmitHandler<LoginFormData> = (formData) => {
+  const onSubmit: SubmitHandler<LoginFormData> = async (formData) => {
     mutate(
       { email: formData.email, password: formData.password },
       {
-        onSuccess: (res) => {
-          toast.success(`Welcome to DuckChat, ${res.data.data.username}`);
-          setAuthUser(res.data.data);
-          const from = location.state?.from || "/";
-          navigate(from, { replace: true });
+        onSuccess: async (res) => {
+          try {
+            const privateKey = await getPrivateKey(
+              res.data.data.id,
+              res.data.data.encryptionKey
+            );
+            if (privateKey) {
+              setPrivateKey(privateKey);
+            }
+
+            setAuthUser(res.data.data);
+            const from = location.state?.from || "/";
+            navigate(from, { replace: true });
+          } catch (error) {
+            toast.error("Failed to decrypt private key");
+            console.error(error);
+          }
         },
         onError: (err) => {
           toast.error(err.message);
@@ -60,7 +70,6 @@ const LoginPage = () => {
       }
     );
   };
-
   if (authUser) {
     return <Navigate to="/" replace />;
   }

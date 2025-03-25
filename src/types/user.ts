@@ -7,6 +7,7 @@ export type User = {
   firstname: string;
   lastname: string;
   publicKey: string;
+  encryptionKey: string;
   profilepic: string;
   roleId: string;
   role: Role;

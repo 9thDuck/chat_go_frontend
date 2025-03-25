@@ -14,7 +14,9 @@ import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 import { ECIES_CONFIG, PrivateKey } from "eciesjs";
-
+import { randomBytes } from "@noble/ciphers/webcrypto";
+import { bytesToHex } from "@noble/ciphers/utils";
+import { initStorage, storePrivateKey } from "@/lib/offline-storage";
 // Configure ECIES before using
 ECIES_CONFIG.ellipticCurve = "x25519";
 ECIES_CONFIG.symmetricAlgorithm = "xchacha20";
@@ -61,35 +63,45 @@ const SignupPage = () => {
     },
     resolver: zodResolver(signupFormSchema),
   });
-  const { removeAuthUser, setPrivateKey } = useAuthStore();
+  const { removeAuthUser } = useAuthStore();
 
   const { mutate, isPending } = useSignup();
   const navigate = useNavigate();
 
   const onSubmit: SubmitHandler<SignUpFormData> = async (formData) => {
-    console.time("keygen");
     const sk = new PrivateKey();
-    const privateKey = {
-      secret: sk.secret,
-      username: formData.username,
-    };
-    const existingPrivateKey = localStorage.getItem("privateKeys")
-      ? JSON.parse(localStorage.getItem("privateKeys")!)
-      : [];
-    existingPrivateKey.push(privateKey);
-    localStorage.setItem("privateKeys", JSON.stringify(existingPrivateKey));
+    const privateKey = sk.toHex();
+    const [encryptionKeyId, encryptionKey] = Array.from({ length: 2 }, () =>
+      bytesToHex(randomBytes(32))
+    );
+
     mutate(
       {
         username: formData.username,
         email: formData.email,
         password: formData.password,
         publicKey: sk.publicKey.toHex(true),
+        encryptionKeyId,
+        encryptionKey,
       },
       {
-        onSuccess: async () => {
-          navigate("/auth/login");
-          setPrivateKey(privateKey);
-          toast.success(`Please login into your shiny new account`);
+        onSuccess: async (response) => {
+          try {
+            await initStorage();
+            await storePrivateKey(
+              response.data.data.id,
+              privateKey,
+              encryptionKey
+            );
+
+            navigate("/auth/login");
+            toast.success(`Please login into your shiny new account`);
+          } catch (error) {
+            console.error("Failed to initialize secure storage:", error);
+            toast.error(
+              "Account created but failed to set up encryption. Please contact support."
+            );
+          }
         },
         onError: (err) => {
           removeAuthUser();

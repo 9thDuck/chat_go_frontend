@@ -7,12 +7,20 @@ import {
 } from "@/constants/NavItems";
 import { LogoutNavBtn } from "./LogoutNavBtn";
 import { ThemeSwitcher } from "./ThemeSwitcher";
+import { Menu } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "./ui/DropdownMenu";
 
 type NavLinkProps = {
   path: string;
   name: string;
   icon: React.ReactNode;
 };
+
 export function NavLink({ path, name, icon }: NavLinkProps) {
   const { pathname } = useLocation();
   return (
@@ -24,6 +32,31 @@ export function NavLink({ path, name, icon }: NavLinkProps) {
       {icon}
       <span className="hidden sm:inline">{name}</span>
     </Link>
+  );
+}
+
+export function MobileNavMenu() {
+  const { pathname } = useLocation();
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button className="btn btn-sm btn-ghost sm:hidden">
+          <Menu className="w-4 h-4" />
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="w-48">
+        {UNAUTHENTICATED_NAV_ITEMS.map(
+          (item) =>
+            pathname !== item.path && (
+              <DropdownMenuItem key={item.path} asChild>
+                <Link to={item.path} className="w-full">
+                  {item.name}
+                </Link>
+              </DropdownMenuItem>
+            )
+        )}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -45,9 +78,14 @@ export function Navbar() {
                 <LogoutNavBtn />
               </>
             ) : (
-              UNAUTHENTICATED_NAV_ITEMS.map((n) =>
-                pathname != n.path ? <NavLink key={n.path} {...n} /> : null
-              )
+              <>
+                <div className="hidden sm:flex gap-2">
+                  {UNAUTHENTICATED_NAV_ITEMS.map((n) =>
+                    pathname !== n.path ? <NavLink key={n.path} {...n} /> : null
+                  )}
+                </div>
+                <MobileNavMenu />
+              </>
             )}
           </nav>
         </div>

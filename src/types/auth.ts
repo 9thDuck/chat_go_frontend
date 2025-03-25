@@ -6,4 +6,6 @@ export type SignupCredentials = LoginCredentials & {
 
 export type SignupPayload = SignupCredentials & {
   publicKey: string;
+  encryptionKeyId: string;
+  encryptionKey: string;
 };

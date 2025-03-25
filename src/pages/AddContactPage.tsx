@@ -2,7 +2,7 @@ import { useState, useCallback, useRef } from "react";
 import { Search, UserIcon, ArrowLeft } from "lucide-react";
 import { toast } from "sonner";
 import { LoadingIndicator } from "@/components/LoadingIndicator";
-import { encryptMessage } from "@/lib/utils";
+import { asymEncryptMessage } from "@/lib/utils";
 import { useSearchUsers } from "@/hooks/useSearchUsers";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -45,7 +45,10 @@ const AddContactPage = () => {
 
     try {
       console.log(selectedUser);
-      const encryptedMessage = encryptMessage(message, selectedUser.publicKey);
+      const encryptedMessage = asymEncryptMessage(
+        message,
+        selectedUser.publicKey
+      );
       mutate(
         {
           userId: selectedUser.id,
