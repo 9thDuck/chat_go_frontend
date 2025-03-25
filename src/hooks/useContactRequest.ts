@@ -9,7 +9,7 @@ import { api } from "@/lib/api";
 import { ContactRequest, ContactRequestsResponse } from "@/types/contact";
 import { InfiniteData } from "@tanstack/react-query";
 import { useAuthStore } from "@/store/useAuthStore";
-
+import { useNavigate } from "react-router-dom";
 export function useAcceptContactRequest() {
   const queryClient = useQueryClient();
 
@@ -67,6 +67,7 @@ interface SendContactRequestParams {
 export function useSendContactRequest() {
   const queryClient = useQueryClient();
   const { authUser } = useAuthStore();
+  const navigate = useNavigate();
 
   return useMutation({
     mutationFn: async ({ userId, message }: SendContactRequestParams) => {
@@ -137,6 +138,9 @@ export function useSendContactRequest() {
       if (context?.previousData) {
         queryClient.setQueryData(["contact-requests"], context.previousData);
       }
+    },
+    onSuccess: () => {
+      navigate({ pathname: "/", search: "view=requests" });
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["contact-requests"] });

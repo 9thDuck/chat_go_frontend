@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Input } from "@/components/Input";
 import { Search, Plus, Bell, Users } from "lucide-react";
 import { useDebounce } from "@/hooks/useDebounce";
@@ -19,6 +19,11 @@ export function ContactsSidebar() {
   const [viewMode, setViewMode] = useState<ViewMode>(
     viewParam === "requests" ? "requests" : "contacts"
   );
+
+  useEffect(() => {
+    setViewMode(viewParam === "requests" ? "requests" : "contacts");
+  }, [viewParam]);
+
   const [searchTerm, setSearchTerm] = useState("");
   const debouncedSearch = useDebounce(searchTerm, 300);
   const parentRef = useRef<HTMLDivElement>(null);
@@ -76,7 +81,10 @@ export function ContactsSidebar() {
             <Bell className="w-4 h-4" />
             Requests
           </button>
-          <Link to="/contacts/add" className="btn btn-ghost btn-sm">
+          <Link
+            to={{ pathname: "/contacts/add", search: "view=requests" }}
+            className="btn btn-ghost btn-sm"
+          >
             <Plus className="w-4 h-4" />
           </Link>
         </div>
