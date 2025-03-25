@@ -33,7 +33,16 @@ export function ChatMessages({ contactId }: ChatMessagesProps) {
   const messages = getMessages(contactId);
 
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    const container = containerRef.current;
+    if (!container) return;
+
+    // Only scroll if within 100px of bottom
+    const isNearBottom =
+      container.scrollHeight - container.scrollTop - container.clientHeight <
+      100;
+    if (isNearBottom) {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
   }, [messages]);
 
   const handleScroll = useCallback(() => {
