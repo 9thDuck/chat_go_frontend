@@ -59,24 +59,24 @@ const AddContactPage = () => {
             toast.success("Contact request sent successfully");
           },
           onError: (error: unknown) => {
-            console.log(error);
-            if (error instanceof AxiosError) {
-              toast.error(error.response?.data.error);
-            } else {
-              toast.error("Failed to send contact request");
-            }
+            console.error(
+              "Contact request failed - User ID:",
+              selectedUser.id,
+              "Error:",
+              error
+            );
+            toast.error("Failed to send contact request");
           },
         }
       );
     } catch (error: unknown) {
-      if (error instanceof AxiosError) {
-        toast.error(
-          error.response?.data?.message || "Failed to send contact request"
-        );
-      } else {
-        console.log(error);
-        toast.error("Failed to send contact request");
-      }
+      console.error(
+        "Contact request processing failed - Message:",
+        message,
+        "Error:",
+        error
+      );
+      toast.error("Failed to send contact request");
     }
   };
 
