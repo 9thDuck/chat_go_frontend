@@ -77,7 +77,6 @@ export function useSendContactRequest() {
           message,
         });
 
-        // In this case backend will send 204 res, so we construct the request object from the input data
         if (response.status === 204) {
           return {
             senderId: authUser!.id,
@@ -85,17 +84,17 @@ export function useSendContactRequest() {
             createdAt: new Date().toISOString(),
             senderUsername: authUser!.username,
             receiverUsername: getUsernameFromSearchCache(queryClient, userId),
+            messageContent: message,
           };
         }
 
-        // If we have data, transform it, in case we change the backend in the future so that it sends the response object
         return response.data.data;
       } catch (error) {
         console.error("Error sending contact request:", error);
         throw error;
       }
     },
-    onMutate: async ({ userId }) => {
+    onMutate: async ({ userId, message }) => {
       await queryClient.cancelQueries({ queryKey: ["contact-requests"] });
       const receiverUsername = getUsernameFromSearchCache(queryClient, userId);
 
@@ -113,6 +112,7 @@ export function useSendContactRequest() {
           createdAt: new Date().toISOString(),
           senderUsername: authUser.username,
           receiverUsername,
+          messageContent: message,
         };
 
         queryClient.setQueryData<typeof previousData>(
@@ -275,6 +275,8 @@ export function useGetContactRequests() {
       return nextPage <= totalPages ? nextPage : undefined;
     },
     initialPageParam: 1,
+    refetchOnWindowFocus: true,
+    staleTime: 60_000,
   });
 }
 

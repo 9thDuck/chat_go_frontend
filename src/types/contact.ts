@@ -9,6 +9,7 @@ export type ContactRequest = {
   createdAt: string;
   senderUsername: string;
   receiverUsername: string;
+  messageContent: string;
 };
 
 export type ContactRequestsResponse = PaginatedResponse<ContactRequest>;

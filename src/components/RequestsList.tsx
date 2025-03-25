@@ -9,6 +9,7 @@ import {
 } from "@/hooks/useContactRequest";
 import { toast } from "sonner";
 import { ContactRequest } from "@/types/contact";
+import ContactRequestItem from "@/components/contacts/ContactRequestItem";
 
 interface RequestsListProps {
   isLoading: boolean;
@@ -79,7 +80,7 @@ export function RequestsList({
           <VirtualList
             items={incomingRequests}
             renderItem={(request) => (
-              <RequestItem
+              <ContactRequestItem
                 request={request}
                 type="incoming"
                 onAccept={() => {
