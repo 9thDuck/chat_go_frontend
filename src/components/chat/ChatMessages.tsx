@@ -6,6 +6,7 @@ import { Message } from "@/types/message";
 import { cn } from "@/lib/classNames";
 import { User } from "lucide-react";
 import { useLoadMessages } from "@/hooks/useLoadMessages";
+import { useMessagesStore } from "@/store/useMessagesStore";
 
 interface ChatMessagesProps {
   contactId: number;
@@ -22,15 +23,18 @@ interface MessageBubbleProps {
 }
 
 export function ChatMessages({ contactId }: ChatMessagesProps) {
-  const { data, isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
+  const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useLoadMessages(contactId);
   const { authUser } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const { getMessages } = useMessagesStore();
+
+  const messages = getMessages(contactId);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [data?.pages[0]?.records]);
+  }, [messages]);
 
   const handleScroll = useCallback(() => {
     const container = containerRef.current;
@@ -49,17 +53,16 @@ export function ChatMessages({ contactId }: ChatMessagesProps) {
     }
   }, [handleScroll]);
 
-  const messages = useMemo(() => {
-    const allMessages = data?.pages.flatMap((page) => page.records) ?? [];
-    return allMessages.filter(
-      (m) => m.senderId === contactId || m.receiverId === contactId
-    );
-  }, [data, contactId]);
-
   const groupedMessages = useMemo(() => {
-    return messages.reduce((groups, message, index) => {
+    // Sort messages in ascending order before grouping
+    const sortedMessages = [...messages].sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    );
+
+    return sortedMessages.reduce((groups, message, index) => {
       const isCurrentUser = message.senderId === authUser?.id;
-      const nextMessage = messages[index + 1];
+      const nextMessage = sortedMessages[index + 1];
 
       const showAvatar = true;
       const showTime =

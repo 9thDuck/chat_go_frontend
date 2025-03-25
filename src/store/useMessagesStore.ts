@@ -17,12 +17,18 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
   lastSync: {},
 
   addMessage: (contactId: number, message: Message) =>
-    set((state) => ({
-      messages: {
-        ...state.messages,
-        [contactId]: [...(state.messages[contactId] || []), message],
-      },
-    })),
+    set((state) => {
+      const existing = state.messages[contactId] || [];
+      // Prevent duplicates by ID
+      if (existing.some((m) => m.id === message.id)) return state;
+
+      return {
+        messages: {
+          ...state.messages,
+          [contactId]: [...existing, message],
+        },
+      };
+    }),
 
   addMessages: (messages: Message[]) =>
     set((state) => {
@@ -32,7 +38,11 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
           message.senderId === useAuthStore.getState().authUser?.id
             ? message.receiverId
             : message.senderId;
-        newMessages[contactId] = [...(newMessages[contactId] || []), message];
+
+        const existing = newMessages[contactId] || [];
+        // Filter out any existing messages with same ID
+        const updated = existing.filter((m) => m.id !== message.id);
+        newMessages[contactId] = [...updated, message];
       });
       return { messages: newMessages };
     }),
@@ -45,7 +55,11 @@ export const useMessagesStore = create<MessagesState>()((set, get) => ({
       },
     })),
 
-  getMessages: (contactId: number) => get().messages[contactId] || [],
+  getMessages: (contactId: number) =>
+    (get().messages[contactId] || []).sort(
+      (a, b) =>
+        new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime()
+    ),
 
   clear: () => set({ messages: {}, lastSync: {} }),
 }));
