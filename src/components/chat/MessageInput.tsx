@@ -4,13 +4,30 @@ import { toast } from "sonner";
 import { asymEncryptMessage } from "@/lib/utils";
 import { useAuthStore } from "@/store/useAuthStore";
 import { useSendMessage } from "@/hooks/useSendMessage";
-import { storeMessage } from "@/lib/offline-storage";
+import {
+  storeMessage,
+  swapLocalMessageWithServerMessageId,
+  deleteMessage,
+} from "@/lib/offline-storage";
 import { useMessagesStore } from "@/store/useMessagesStore";
+import { Message } from "@/types/message";
 
 interface MessageInputProps {
   contactId: number;
   publicKey: string;
 }
+
+const DRAFT_MESSAGE: Omit<Message, "id" | "content" | "localId"> = {
+  senderId: 0, // Temp value, will be overwritten
+  receiverId: 0, // Temp value, will be overwritten
+  isRead: false,
+  isDelivered: false,
+  version: 1,
+  edited: false,
+  createdAt: new Date().toISOString(),
+  updatedAt: new Date().toISOString(),
+  attachments: [],
+};
 
 export function MessageInput({ contactId, publicKey }: MessageInputProps) {
   const [message, setMessage] = useState("");
@@ -31,6 +48,7 @@ export function MessageInput({ contactId, publicKey }: MessageInputProps) {
 
     try {
       const encryptedContent = asymEncryptMessage(message, publicKey);
+      const localId = `local-${Date.now()}`; // Generate temporary ID
 
       sendMessage(
         {
@@ -39,6 +57,10 @@ export function MessageInput({ contactId, publicKey }: MessageInputProps) {
         },
         {
           onSuccess: async (data) => {
+            await swapLocalMessageWithServerMessageId(
+              localId,
+              data.response.data.data.id
+            );
             await storeMessage(
               { ...data.response.data.data, content: message },
               getEncryptionKey()
@@ -50,16 +72,37 @@ export function MessageInput({ contactId, publicKey }: MessageInputProps) {
             setMessage("");
           },
           onError: (error) => {
-            console.error("Failed to send message:", error);
-            toast.error(
-              "Failed to send message. It's saved locally and will retry later."
+            deleteMessage(localId);
+            console.error(
+              "Message send failed - Local ID:",
+              localId,
+              "Error:",
+              error
             );
+            toast.error("Message failed to send");
           },
         }
       );
+
+      await storeMessage(
+        {
+          ...DRAFT_MESSAGE,
+          senderId: authUser.id,
+          receiverId: contactId,
+          content: message,
+          localId,
+          id: localId,
+        },
+        getEncryptionKey()
+      );
     } catch (error) {
-      console.error("Failed to process message:", error);
-      toast.error("Failed to process message");
+      console.error(
+        "Message processing failed - Content:",
+        message,
+        "Error:",
+        error
+      );
+      toast.error("Failed to send message");
     }
   };
 

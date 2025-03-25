@@ -215,3 +215,8 @@ export async function checkMessageExists(messageId: string): Promise<boolean> {
   const count = await db.messages.where({ id: messageId }).count();
   return count > 0;
 }
+
+export async function deleteMessage(localMessageId: string): Promise<void> {
+  await initStorage();
+  await db.messages.delete(localMessageId);
+}
