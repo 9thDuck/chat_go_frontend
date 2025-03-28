@@ -37,10 +37,15 @@ export function MessageInput({ contactId, publicKey }: MessageInputProps) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
-    if (textareaRef.current) {
+    if (textareaRef.current && !message) {
       textareaRef.current.focus();
     }
-  }, []);
+  }, [message]);
+
+  // clear message when we switch contact
+  useEffect(() => {
+    setMessage("");
+  }, [contactId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
