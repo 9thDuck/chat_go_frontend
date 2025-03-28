@@ -7,6 +7,9 @@ import { cn } from "@/lib/classNames";
 import { User } from "lucide-react";
 import { useLoadMessages } from "@/hooks/useLoadMessages";
 import { useMessagesStore } from "@/store/useMessagesStore";
+import { useSocket } from "@/providers/SocketProvider";
+import { asymDecryptMessage } from "@/lib/utils";
+import { storeMessage } from "@/lib/offline-storage";
 
 interface ChatMessagesProps {
   contactId: number;
@@ -25,10 +28,37 @@ interface MessageBubbleProps {
 export function ChatMessages({ contactId }: ChatMessagesProps) {
   const { isLoading, hasNextPage, isFetchingNextPage, fetchNextPage } =
     useLoadMessages(contactId);
-  const { authUser } = useAuthStore();
+  const { authUser, getPrivateKey, getEncryptionKey } = useAuthStore();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const { getMessages } = useMessagesStore();
+  const { getMessages, addMessage } = useMessagesStore();
+  const socket = useSocket();
+
+  useEffect(() => {
+    if (!socket) return;
+    const messageHandler = async (event: MessageEvent) => {
+      const parsed = JSON.parse(event.data);
+      if (parsed.type !== "MESSAGE") return;
+      if (!parsed.message) return;
+      const message: Message = parsed.message;
+      const decryptedContent = asymDecryptMessage(
+        message.content,
+        getPrivateKey()
+      );
+      const messageWithDecryptedContent = {
+        ...message,
+        content: decryptedContent,
+      };
+      await storeMessage(messageWithDecryptedContent, getEncryptionKey());
+      addMessage(
+        messageWithDecryptedContent.senderId,
+        messageWithDecryptedContent
+      );
+    };
+
+    socket.addEventListener("message", messageHandler);
+    return () => socket.removeEventListener("message", messageHandler);
+  }, [addMessage, getEncryptionKey, getPrivateKey, socket]);
 
   const messages = getMessages(contactId);
 

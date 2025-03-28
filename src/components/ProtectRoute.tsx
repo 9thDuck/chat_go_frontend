@@ -1,5 +1,6 @@
 import { useCheckAuth } from "@/hooks/useCheckAuth";
 import { unprotectedRoutes } from "@/lib/auth-utils";
+import { SocketProvider } from "@/providers/SocketProvider";
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 
@@ -19,5 +20,5 @@ export function ProtectRoute({
     );
   }
 
-  return <>{children}</>;
+  return <SocketProvider>{children}</SocketProvider>;
 }
